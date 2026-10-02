@@ -11,7 +11,7 @@ import math
 # return True or False
 def isearch(L, x):
     ###TODO
-    iterate(lambda y,z: y or (z==x), False, L)
+    return iterate(lambda y,z: y or (z==x), False, L)
     pass
 
 def iterate(f, x, a):
@@ -27,7 +27,7 @@ def rsearch(L, x):
     ###TODO
     mapped = [element == x for element in L]
 
-    reduce(lambda a,b: a or b, False, mapped) #checks if either list found it
+    return reduce(lambda a,b: a or b, False, mapped) #checks if either list found it
     pass
 
 def reduce(f, id_, a):
@@ -132,7 +132,7 @@ def doc_index_reduce(group):
     singles = [[d] for d in group[1]]
 
     ### TODO fix this line
-    return (group[0], reduce(dedup, singles, []))
+    return (group[0], reduce(dedup, [], singles))
 
 def collect(pairs):
     """
