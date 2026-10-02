@@ -11,6 +11,7 @@ import math
 # return True or False
 def isearch(L, x):
     ###TODO
+    iterate(lambda y,z: y or (z==x), False, L)
     pass
 
 def iterate(f, x, a):
@@ -24,6 +25,9 @@ def iterate(f, x, a):
 # return True or False
 def rsearch(L, x):
     ###TODO
+    mapped = [element == x for element in L]
+
+    reduce(lambda a,b: a or b, False, mapped) #checks if either list found it
     pass
 
 def reduce(f, id_, a):
@@ -99,6 +103,16 @@ def dedup(a, b):
     >>> dedup([1,2,3], [3,4,5])
     [1,2,3,4,5]
     """
+    if not a:
+        return b
+    if not b:
+        return a
+
+    if a[-1] == b[0]:
+        return a[0:-1] + b
+    else:
+        return a+b
+
     ###TODO
     pass
     
@@ -115,8 +129,10 @@ def doc_index_reduce(group):
     >>> doc_index_reduce(['is', [0,0,1,2]])
     ('is', [0,1,2])
     """
+    singles = [[d] for d in group[1]]
+
     ### TODO fix this line
-    return (group[0], group[1])
+    return (group[0], reduce(dedup, singles, []))
 
 def collect(pairs):
     """
@@ -161,6 +177,9 @@ def parens_match_iterative(mylist):
     >>>parens_match_iterative(['('])
     False
     """
+    res = iterate(parens_update, 0, mylist)
+
+    return res == 0
     ### TODO
     pass
 
@@ -177,6 +196,15 @@ def parens_update(current_output, next_input):
     Returns:
       the updated value of `current_output`
     """
+    if current_output < 0:
+        return current_output #if it dips below 0 that meaans a closing parenthesis came before an opening one
+
+    if next_input == "(":
+        return current_output + 1
+    elif next_input == ")":
+        return current_output - 1
+    else:
+        return current_output
     ###TODO
     pass
 
@@ -199,6 +227,13 @@ def parens_match_scan(mylist):
     False
     
     """
+    mapped = list(map(paren_map, mylist))
+    
+    running_sums, total = scan(plus, 0, mapped)
+    
+    min_val = reduce(min_f, float('inf'), running_sums)
+    
+    return min_val >= 0 and total == 0
     ###TODO
     pass
 
@@ -267,6 +302,28 @@ def parens_match_dc_helper(mylist):
       L is the number of unmatched left parentheses. This output is used by 
       parens_match_dc to return the final True or False value
     """
+    if len(mylist) == 0:
+        return (0, 0)
+
+    if len(mylist) == 1:
+        x = mylist[0]
+        if x == '(':
+            return (0, 1)  # 0 unmatched right, 1 unmatched left
+        elif x == ')':
+            return (1, 0)  # 1 unmatched right, 0 unmatched left
+        else:
+            return (0, 0)  # Ignore other characters
+            
+    mid = len(mylist) // 2
+    left_R, left_L = parens_match_dc_helper(mylist[:mid])
+    right_R, right_L = parens_match_dc_helper(mylist[mid:])
+
+    matched = min(left_L, right_R)
+    
+    R = left_R + (right_R - matched)
+    L = right_L + (left_L - matched)
+    
+    return (R, L)
     ###TODO
     pass
     
